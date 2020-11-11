@@ -1,0 +1,126 @@
+{% extends "base_template.html" %}
+
+{% block title %}Soporte Equipos{% endblock %}
+
+{% block content %}
+
+<br>
+<div class="row">
+	<div class="col-md-1">
+		<a href="/lezama/" class="btn btn-primary stretched-link">DC Lezama</a><br>
+	</div>
+	<div class="col-md-1">
+		<a href="/pando/" class="btn btn-primary stretched-link">DC Pando</a><br>
+	</div>
+	<div class="col-md-1">
+		<a href="/mercedes/" class="btn btn-primary stretched-link">Mercedes</a><br><br>
+	</div>
+</div>
+
+<a href="/mails/">Prueba mail</a><br><br>
+
+<div>
+  <a href="/post_equipo/">Agregar equipo</a><br>
+</div>
+
+<div class="row">
+        <div class="col-md-12">
+	<hr style="border-color:#0E6655;">
+{% if dc=='lezama' %}
+    <h1 align="center">DC Lezama</h1>
+{% elif dc=='pando' %}
+    <h1 align="center">DC Pando</h1>
+{% elif dc=='mercedes' %}
+    <h1 align="center">Mercedes</h1>
+{% else %}
+	<h1 align="center">Todos los sitios</h1>
+{% endif %}
+	<hr style="border-color:#0E6655;">
+</div>
+</div>
+
+<div>
+  <label>Equipos por pagina </label>
+  <select name="equipos-por-pagina" onchange="equipos_pagina(this.value)">
+    <option value="5" {% if por_page == 5: %} selected {% endif %}>5</option> 
+    <option value="10" {% if por_page == 10: %} selected {% endif %}>10</option>
+    <option value="20" {% if por_page == 20: %} selected {% endif %}>20</option>
+  </select>
+</div>
+<br>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-striped table-hover table-bordered table-sm bg-white">
+        <thead>
+          <tr  style="background-color: #7FB3D5;">
+            <th>Tipo</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>S/N</th>
+            <th>Tinco</th>
+            <th>Plataforma</th>
+            <th>Datacenter</th> 
+            <th>Sala</th>
+            <th>Rack</th>
+            <th>Proveedor</th>
+            <th>Vencimiento_Soporte</th>
+	    <th>Accion</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for equipo in equipos.items %}
+          <tr>
+            <td>{{ equipo.tipo }}</td>
+            <td>{{ equipo.marca }}</td>
+            <td>{{ equipo.modelo }}</td>
+            <td>{{ equipo.sn }}</td>
+            <td>{{ equipo.tinco }}</td>
+            <td>{{ equipo.plataforma }}</td>
+            <td>{{ equipo.datacenter }}</td>
+            <td>{{ equipo.sala }}</td>
+            <td>{{ equipo.rack }}</td>
+            <td>{{ equipo.proveedor }}</td>
+            <td>{{ equipo.soporte.strftime('%d-%m-%Y') }}</td>
+            <td>
+              <a href="/post_equipo/{{equipo.id}}" class="btn btn-warning">Editar</a>
+              <a href="/eliminar_equipo/{{equipo.id}}" class="btn btn-danger btn-delete" onclick="return confirmar()">Borrar</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+
+   <div class="col-md-5">
+    <div class=pagination>
+        {%- for page in equipos.iter_pages() %}
+            {% if page %}
+                {% if page != equipos.page %}
+                    <a href="{{ url_for('equipos.index', dc=dc, page=page, por_page=por_page) }}">{{ page }}</a>
+                {% else %}
+                    <strong>{{ page }}</strong>
+                {% endif %}
+            {% else %}
+                <span class=ellipsis>…</span>
+            {% endif %}
+        {%- endfor %}
+    </div>
+   </div>
+  </div>
+
+  <script language="Javascript">
+    function confirmar()
+    {
+      return confirm("Esta a punto de borrar este equipo")
+    }
+  </script>
+
+  <script language="Javascript">
+      function equipos_pagina(por_page)
+      {
+        window.location.replace("{{ url_for('equipos.index', dc=dc) }}"+"?por_page="+por_page);
+      }
+    </script>
+  
+{% endblock %}

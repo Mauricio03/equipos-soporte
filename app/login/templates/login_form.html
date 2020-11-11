@@ -1,0 +1,48 @@
+{% extends "base_template.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2 col-md-offset-4">
+     <div class="card">
+      <div class="card-body">
+
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+		<table>
+				<tbody>
+					<tr>
+						<td>{{ form.user.label }}</td>
+						<td>{{ form.user }}<br>
+					                {% for error in form.user.errors %}
+                					<span style="color: red;">{{ error }}</span>
+                					{% endfor %}
+						</td>
+
+					</tr>
+					<tr>
+                                                <td>{{ form.password.label }}</td>
+                                                <td>{{ form.password }}<br>
+                                                        {% for error in form.password.errors %}
+                                                        <span style="color: red;">{{ error }}</span>
+                                                        {% endfor %}
+                                                </td>
+
+                                        </tr>
+					<tr>
+						<td>{{ form.remember_me() }} {{ form.remember_me.label }}</td>
+						<td style="text-align:right"> {{ form.submit() }} </td>
+					</tr>
+
+				</tbody>
+		</table>
+	
+
+        </form>
+</div>
+</div>
+</div>
+</div>
+
+{% endblock %}

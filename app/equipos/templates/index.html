@@ -1,0 +1,165 @@
+{% extends "base_template.html" %}
+
+{% block title %}Soporte Equipos{% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+        <div class="col-md-12">
+	<hr style="border-color:#0E6655;">
+{% if dc=='lezama' %}
+    <h1 align="center">DC Lezama</h1>
+{% elif dc=='pando' %}
+    <h1 align="center">DC Pando</h1>
+{% elif dc=='mercedes' %}
+    <h1 align="center">Mercedes</h1>
+{% else %}
+	<h1 align="center">Todos los sitios</h1>
+{% endif %}
+	<hr style="border-color:#0E6655;">
+</div>
+</div>
+
+<div>
+  <table style="height: 12px; width: 100%; border-collapse: collapse;">
+    <tbody>
+      <tr style="height: 20px;">
+        <td style="width: 70%; height: 12px;"><strong><label>Equipos por pagina </label></strong>
+          <select name="equipos-por-pagina" onchange="equipos_pagina(this.value)">
+            <option value="10" {% if  por_page==10 %} selected {% endif %}>10</option>
+            <option value="20" {% if  por_page==20 or por_page==null %} selected {% endif %}>20</option>
+            <option value="40" {% if  por_page== 40 %} selected {% endif %}>40</option>
+          </select>
+        </td>
+        <td style="width: 30%; height: 12px;">
+          <form action="/buscador/" method="post">
+            <p><strong>Buscador por S/N:</strong> <input type="search" name="buscador" placeholder="S/N" /> <input type="submit" value="Buscar" /></p>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<br>
+
+<div class="btn-group">
+    <a href="{{ url_for('equipos.index', dc=dc, por_page=por_page) }}" class="btn btn-primary">Todos</a>
+    <a href="{{ url_for('equipos.activos', dc=dc, por_page=por_page) }}" class="btn btn-primary">Soporte Activo</a>
+    <a href="{{ url_for('equipos.vencidos', dc=dc, por_page=por_page) }}" class="btn btn-primary">Soporte Vencido</a>
+</div>
+<br>
+<br>
+<div class="row">
+  <div class="col-md-5";>
+   <table>
+	<tr>
+		<td><strong>Ver vencimientos de los próximos: </strong></td>
+		<td>
+		   <div class="btn-group">
+			<a href="{{ url_for('equipos.prox_vencimientos', dias=30, dc=dc, por_page=por_page) }}" class="btn btn-men1">1 mes</a>
+			<a href="{{ url_for('equipos.prox_vencimientos', dias=90, dc=dc, por_page=por_page) }}" class="btn btn-men1">3 meses</a>
+			<a href="{{ url_for('equipos.prox_vencimientos', dias=180, dc=dc, por_page=por_page) }}" class="btn btn-men1">6 meses</a>
+		    </div>
+	<tr>
+   </table>  
+  </div>
+</div>
+
+<div>
+         <div class="col-md-2 col-md-offset-10">
+                <button class="btn btn-success btn-block" onclick="location.href='/post_equipo/'" type="button">
+                        Agregar equipo
+                </button>
+        </div>
+</div>
+<br>
+<br>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-striped table-hover table-bordered table-sm bg-white">
+        <thead>
+          <tr  style="background-color: #7FB3D5;">
+            <th>Tipo</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>S/N</th>
+            <th>Tinco</th>
+            <th>Plataforma</th>
+            <th>Datacenter</th> 
+            <th>Sala</th>
+            <th>Rack</th>
+            <th>Proveedor</th>
+            <th>Vencimiento_Soporte</th>
+	    <th>Accion</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for equipo in equipos.items -%}
+              <tr>
+                <td>{{ equipo.tipo }}</td>
+                <td>{{ equipo.marca }}</td>
+                <td>{{ equipo.modelo }}</td>
+                <td>{{ equipo.sn }}</td>
+                <td>{{ equipo.tinco }}</td>
+                <td>{{ equipo.plataforma }}</td>
+                <td>{{ equipo.datacenter }}</td>
+                <td>{{ equipo.sala }}</td>
+                <td>{{ equipo.rack }}</td>
+                <td>{{ equipo.proveedor }}</td>
+                {% if equipo.soporte < today %}
+                  <td style="background-color:#f75b5b;">
+                {% else %}
+                  <td style="background-color:#83f680;">
+                {% endif %}
+
+                {{ equipo.soporte.strftime('%d-%m-%Y') }}</td>
+                <td>
+                  <a href="/post_equipo/{{equipo.id}}" class="btn btn-info"><span class="glyphicon glyphicon-cog"></span> Editar</a>
+                  <a href="/eliminar_equipo/{{equipo.id}}" class="btn btn-test btn-delete" onclick="return confirmar()"><span class="glyphicon glyphicon-trash"></span> Borrar</a>
+                </td>
+              </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+    
+
+   <div class="col-md-5">
+    <div class=pagination>
+        {%- for page in equipos.iter_pages() %}
+            {% if page %}
+                {% if page != equipos.page %}
+                    <a href="{{ url_for('equipos.index', dc=dc, page=page, por_page=por_page) }}">{{ page }}</a>
+                {% else %}
+                    <strong>{{ page }}</strong>
+                {% endif %}
+            {% else %}
+                <span class=ellipsis>…</span>
+            {% endif %}
+        {%- endfor %}
+    </div>
+   </div>
+  </div>
+
+
+
+
+<a href="/send_informe/">Generar informe de vencimientos</a><br><br>
+
+  <script language="Javascript">
+    function confirmar()
+    {
+      return confirm("Esta a punto de borrar este equipo")
+    }
+  </script>
+
+  <script language="Javascript">
+      function equipos_pagina(por_page)
+      {
+        window.location.replace("{{ url_for('equipos.index', dc=dc) }}"+"?por_page="+por_page);
+      }
+    </script>
+  
+{% endblock %}

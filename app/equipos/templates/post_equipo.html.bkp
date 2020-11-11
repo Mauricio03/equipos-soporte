@@ -1,0 +1,215 @@
+{% extends "base_template.html" %}
+
+{% block title %}
+        {% if id %}
+            Editar equipo {{ id }}
+        {% else %}
+            Agregar equipo
+        {% endif %}
+{% endblock %}
+
+{% block content %}
+    <br>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+
+    {% if id %}
+        {% if error %}
+            <p style="color: red;"><strong>Error:</strong> {{ error }}
+        {% endif %}
+	<div class="card card-body">
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.tipo.label }}
+                {{ form.tipo }}<br>
+            </div>
+            <div>
+                {{ form.marca.label }}
+                {{ form.marca }}<br>
+            </div>
+            <div>
+                {{ form.modelo.label }}
+                {{ form.modelo }}<br>
+            </div>
+            <div>
+                {{ form.sn.label }}
+                {{ form.sn }}<br>
+            </div>
+            <div>
+                {{ form.tinco.label }}
+                {{ form.tinco }}<br>
+            </div>
+            <div>
+                {{ form.plataforma.label }}
+                {{ form.plataforma }}<br>
+            </div>
+            <div>
+                {{ form.datacenter.label }}
+                {{ form.datacenter(onchange="actualizar_sala(this.value)") }}<br>
+            </div>
+            <div>
+                {{ form.salaLezama.label }}
+                {% if form.datacenter.data == 'DC Lezama' %}
+                    {{ form.salaLezama(style="display:inline;") }}
+                    {{ form.salaPando(style="display:none;") }}
+                    {{ form.salaMercedes(onchange="actualizar_rack(this.value)", style="display:none;") }}
+                {% elif form.datacenter.data == 'DC Pando' %}
+                    {{ form.salaLezama(style="display:none;") }}
+                    {{ form.salaPando(style="display:inline;") }}
+                    {{ form.salaMercedes(onchange="actualizar_rack(this.value)", style="display:none;") }}
+                {% else %}
+                    {{ form.salaLezama(style="display:none;") }}
+                    {{ form.salaPando(style="display:none;") }}
+                    {{ form.salaMercedes(onchange="actualizar_rack(this.value)", style="display:inline;") }}
+                {% endif %}
+            </div>
+            <div>
+                {{ form.rackLezamaPiso2.label }}
+                {% if form.datacenter.data == 'DC Lezama' %}
+                    {{ form.rackLezamaPiso2(style="display:inline;") }}
+                    {{ form.rackPandoSala1(style="display:none;") }}
+                    {{ form.rackMercedesExIBM(style="display:none;") }}
+                    {{ form.rackMercedesNDC(style="display:none;") }}
+                {% elif form.datacenter.data == 'DC Pando' %}
+                    {{ form.rackLezamaPiso2(style="display:none;") }}
+                    {{ form.rackPandoSala1(style="display:inline;") }}
+                    {{ form.rackMercedesExIBM(style="display:none;") }}
+                    {{ form.rackMercedesNDC(style="display:none;") }}
+                {% else %}
+                    {{ form.rackLezamaPiso2(style="display:none;") }}
+                    {{ form.rackPandoSala1(style="display:none;") }}
+                    {% if form.salaMercedes.data == "NDC" %}
+                        {{ form.rackMercedesExIBM(style="display:none;") }}
+                        {{ form.rackMercedesNDC(style="display:inline;") }}
+                    {% else %}
+                        {{ form.rackMercedesExIBM(style="display:inline;") }}
+                        {{ form.rackMercedesNDC(style="display:none;") }}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div>
+                {{ form.proveedor.label }}
+                {{ form.proveedor }}<br>
+            </div>
+            <div>
+                {{ form.soporte.label }}
+                {{ form.soporte }}<br>
+            </div>
+            <div>
+                {{ form.editar_equipo() }}
+            </div>
+        </form>
+	</div>
+    {% else %}
+        {% if error %}
+            <p style="color: red;"><strong>Error:</strong> {{ error }}
+        {% endif %}
+	<div class="card card-body">
+	 <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.tipo.label }}
+                {{ form.tipo }}<br>
+            </div>
+            <div>
+                {{ form.marca.label }}
+                {{ form.marca }}<br>
+            </div>
+            <div>
+                {{ form.modelo.label }}
+                {{ form.modelo }}<br>
+            </div>
+            <div>
+                {{ form.sn.label }}
+                {{ form.sn }}<br>
+            </div>
+            <div>
+                {{ form.tinco.label }}
+                {{ form.tinco }}<br>
+            </div>
+            <div>
+                {{ form.plataforma.label }}
+                {{ form.plataforma }}<br>
+            </div>
+            <div>
+                {{ form.datacenter.label }}
+                {{ form.datacenter(onchange="actualizar_sala(this.value)") }}<br>
+            </div>
+            <div>
+                {{ form.salaLezama.label }}
+                {{ form.salaLezama(style="display:inline;") }}
+                {{ form.salaPando(style="display:none;") }}
+                {{ form.salaMercedes(onchange="actualizar_rack(this.value)", style="display:none;") }}
+            </div>
+            <div>
+                {{ form.rackLezamaPiso2.label }}
+                {{ form.rackLezamaPiso2(style="display:inline;") }}
+                {{ form.rackPandoSala1(style="display:none;") }}
+                {{ form.rackMercedesExIBM(style="display:none;") }}
+                {{ form.rackMercedesNDC(style="display:none;") }}
+            </div>
+            <div>
+                {{ form.proveedor.label }}
+                {{ form.proveedor }}<br>
+            </div>
+            <div>
+                {{ form.soporte.label }}
+                {{ form.soporte }}<br>
+            </div>
+            <div>
+                {{ form.post_equipo() }}
+            </div>
+       </form>
+	</div>
+    {% endif %}
+</div>
+</div>
+    <script language="Javascript">
+      function actualizar_sala(dc)
+      {
+        if (dc == 'DC Pando'){
+          document.getElementById("salaLezama").style.display = "none";
+          document.getElementById("salaPando").style.display = "inline";
+          document.getElementById("salaMercedes").style.display = "none";
+          document.getElementById("rackLezamaPiso2").style.display = "none";
+          document.getElementById("rackPandoSala1").style.display = "inline";
+          document.getElementById("rackMercedesExIBM").style.display = "none";
+          document.getElementById("rackMercedesNDC").style.display = "none";
+        }
+        else if (dc == 'DC Lezama'){
+          document.getElementById("salaLezama").style.display = "inline";
+          document.getElementById("salaPando").style.display = "none";
+          document.getElementById("salaMercedes").style.display = "none";
+          document.getElementById("rackLezamaPiso2").style.display = "inline";
+          document.getElementById("rackPandoSala1").style.display = "none";
+          document.getElementById("rackMercedesExIBM").style.display = "none";
+          document.getElementById("rackMercedesNDC").style.display = "none";
+        }
+        else {
+          document.getElementById("salaLezama").style.display = "none";
+          document.getElementById("salaPando").style.display = "none";
+          document.getElementById("salaMercedes").style.display = "inline";
+          document.getElementById("rackLezamaPiso2").style.display = "none";
+          document.getElementById("rackPandoSala1").style.display = "none";
+          document.getElementById("rackMercedesExIBM").style.display = "inline";
+          document.getElementById("rackMercedesNDC").style.display = "none";
+        }
+      }
+    </script>
+
+    <script language="Javascript">
+      function actualizar_rack(sala)
+      {
+        if (sala == 'ExIBM'){
+          document.getElementById("rackMercedesExIBM").style.display = "inline";
+          document.getElementById("rackMercedesNDC").style.display = "none";
+        }
+        else {
+          document.getElementById("rackMercedesExIBM").style.display = "none";
+          document.getElementById("rackMercedesNDC").style.display = "inline";
+        }
+      }
+    </script>
+{% endblock %}
